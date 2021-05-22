@@ -5,6 +5,7 @@ const fs = require('fs');
 
 module.exports = (app) => {
 
+  
 
   app.get('/api/notes', (req, res) => {
     fs.readFileAsync(path.join(__dirname, "./db/db.json"), "utf8")
