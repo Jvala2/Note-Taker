@@ -1,5 +1,4 @@
-
-
+const uuidv1 = require('uuid/v1');
 const noteData = require('../db/db.json');
 const fs = require('fs');
 const path = require('path');
@@ -14,23 +13,36 @@ module.exports = (app) => {
     })
 });
 
-let data = "saveNote"
-fs.writeFile("./db/db.json", data, (err) => {
-  if (err)
-    console.log(err);
-  else {
-    console.log("File written successfully\n");
-    console.log("The written has the following contents:");
-    console.log(fs.readFileSync("./db/db.json", "utf8"));
-  }
+app.post('/api/notes', (req, res) => {
+  fs.readFile('db/db.json',(err, data) => {
+    if (err) throw err;
+    let json = JSON.parse(data);
+    let note = {
+      title: req.body.title,
+      text: req.body.text,
+      id: uuidv1()
+    }
+    json.push(note);
+    fs.writeFile('db/db.json', JSON.stringify(json, null, 2), (err) => {
+      if (err) throw err;
+      res.send('200');
+    });
+  });
 });
 
 
+  app.delete('/api/notes/:id', (req, res) => {
 
-  app.delete('/api/notes', (req, res) => {
-// .filter
-    noteData.length = 0;
+    fs.readFile('db/db.json',(err, data) => {
 
-    res.json({ ok: true });
+      if (err) throw err;
+      let itemDelete = req.params.id;
+      let json = JSON.parse(data);
+      json.forEach((item, i) =>{
+        if (item.id.includes(itemDelete)){ 
+          json.splice(i, 1);       
+        }
+      });
   });
+});
 };
