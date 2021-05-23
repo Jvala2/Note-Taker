@@ -7,10 +7,18 @@ const path = require('path');
 module.exports = (app) => {
 
   app.get('/api/notes', (req, res) => {
-    fs.readFileAsync(path.join(__dirname, "./db/db.json"), "utf8")
-    .then((data)=> {
-        return res.json(JSON.parse(data));
-    });
+    fs.readFile("./db/db.json", "utf8",function (error, data) {
+      let parsedNotes;
+      console.log(data);
+      // If notes isn't an array or can't be turned into one, send back a new empty array
+      try {
+        parsedNotes = [].concat(JSON.parse(data));
+      } catch (err) {
+        parsedNotes = [];
+      }
+
+      return parsedNotes;
+    })
 });
 
 
@@ -23,8 +31,8 @@ module.exports = (app) => {
 
 
 
-  app.post('/api/clear', (req, res) => {
-    // Empty out the arrays of data
+  app.delete('/api/notes', (req, res) => {
+
     noteData.length = 0;
 
     res.json({ ok: true });
