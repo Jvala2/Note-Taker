@@ -21,7 +21,10 @@ const show = (elem) => {
 const hide = (elem) => {
   elem.style.display = 'none';
 };
-
+fetch("/api/notes")
+.then(function (res) {
+  console.log(res)
+})
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
